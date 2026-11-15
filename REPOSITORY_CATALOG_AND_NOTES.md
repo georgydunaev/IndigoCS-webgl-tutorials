@@ -43,7 +43,9 @@ All binary 3D assets (`.blend`, `.blend1`, `.fbx`, `.png`) are preserved untouch
 - **`common/camera.js` (845 lines)**: Self-contained UMD JavaScript module providing `vec3`, `vec4`, `mat4`, `quat`, `Frustum` (6-plane Gribb-Hartmann extraction, sphere and AABB culling), `Ray` (screen-to-world unprojection, ray-plane, ray-sphere, ray-AABB slabs intersection), `OrbitCamera`, and `FirstPersonCamera`.
 - **`tests/camera_math.py`, `tests/test_camera.py`, `tests/test_webgl_tutorials.py`**: Python reference implementation and verification suite for matrix/quaternion identities, frustum culling, ray casting, and GLSL shader syntax.
 
-## 3. Notes on Unfinished Sections and Open Integration Opportunities
+## 3. Specular Phong Lighting and OrbitCamera Integration Extension (`common/phong_specular_and_orbit.js`)
 
-- **Tutorial 05 Specular Phong Term**: Note that `05 - Phong Lighting Intro/shader.fs.glsl` implements ambient plus diffuse directional lighting (`ambientLightIntensity + sun.color * max(dot(fragNormal, normSunDir), 0.0)`) as an introduction to Phong shading, leaving the camera-dependent specular reflection term ($R \cdot V)^\alpha$ as the natural follow-up exercise.
-- **Interactive Camera Integration in Tutorials 02 to 05**: While `common/camera.js` implements complete `OrbitCamera` and `FirstPersonCamera` classes and `Shadow Mapping/LightMapDemoScene.js` uses keyboard camera controls, Tutorials 02 through 05 currently use fixed `mat4.lookAt` cameras with automatic object rotation and can optionally wire in `OrbitCamera` mouse/wheel handlers.
+- **`common/phong_specular_and_orbit.js`**:
+  - Implements `PHONG_SPECULAR_VERTEX_SHADER_SRC` and `PHONG_SPECULAR_FRAGMENT_SHADER_SRC`, extending Tutorial 05 (`05 - Phong Lighting Intro/shader.fs.glsl`) with view-dependent specular reflection $(V \cdot R)^{\alpha}$ parameterized by `cameraPosition`, `specularIntensity`, and `shininess`.
+  - Provides `evaluatePhongIllumination(params)` for deterministic CPU reference evaluation of ambient, diffuse, and specular Phong shading components.
+  - Provides `attachOrbitCameraController(canvas, camera, options)` binding mouse drag (orbit and Shift/right-click pan) and wheel zoom events from any tutorial canvas to `OrbitCamera` (`common/camera.js`) and uploading `mView`, `mProj`, and `cameraPosition` uniforms directly to a WebGL shader program.
